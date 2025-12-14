@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Website - Local Password Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a th:href="@{/websites/{id}(id=${website.id})}" class="nav-brand">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" style="color: var(--brand-primary);">
+                    <path d="M19 12H5"></path>
+                    <path d="M12 19l-7-7 7-7"></path>
+                </svg>
+                <span>Back to Details</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="container" style="max-width: 600px; padding-top: 2rem;">
+        <div class="card p-8">
+            <h1 class="heading-lg mb-6">Edit Website</h1>
+
+            <form th:action="@{/websites/{id}/update(id=${website.id})}" method="post" th:object="${website}">
+                <div class="form-group">
+                    <label for="name" class="form-label">Website Name</label>
+                    <input type="text" id="name" name="name" th:value="${website.name}" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="url" class="form-label">URL</label>
+                    <input type="url" id="url" name="url" th:value="${website.url}" class="form-input" required>
+                </div>
+
+                <div class="flex gap-4 mt-8">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <a th:href="@{/websites/{id}(id=${website.id})}" class="btn btn-ghost">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

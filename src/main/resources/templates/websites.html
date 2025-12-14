@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Vault - Local Password Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="/" class="nav-brand">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" style="color: var(--brand-primary);">
+                    <path d="M19 12H5"></path>
+                    <path d="M12 19l-7-7 7-7"></path>
+                </svg>
+                <span th:text="#{create.back}">Back to Home</span>
+            </a>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <div>
+                    <a href="?lang=en"
+                        style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">EN</a>
+                    <span style="color: var(--text-muted);">|</span>
+                    <a href="?lang=es"
+                        style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">ES</a>
+                </div>
+                <a href="/credentials/create" class="btn btn-primary"
+                    style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    <span th:text="#{home.add_password}">Add New</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="heading-lg" th:text="#{vault.title}">My Secure Vault</h1>
+
+            <!-- Optional: We could add a client-side search here later -->
+        </div>
+
+        <div th:if="${#lists.isEmpty(websites)}" class="text-center" style="padding: 4rem 0;">
+            <div
+                style="background: var(--surface-1); width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto;">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    style="color: var(--text-muted);">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+            </div>
+            <p class="text-muted" th:text="#{vault.empty}">Your vault is empty.</p>
+            <a href="/credentials/create" class="btn btn-primary mt-4" th:text="#{vault.add_first}">Add your first
+                password</a>
+        </div>
+
+        <div class="grid grid-cols-2">
+            <a th:each="website : ${websites}" th:href="@{/websites/{id}(id=${website.id})}" class="card card-hover"
+                style="display: flex; flex-direction: column; justify-content: space-between;">
+                <div class="flex items-center gap-4 mb-4">
+                    <div
+                        style="background: var(--surface-2); padding: 0.5rem; border-radius: 12px; display: flex; align-items: center; justify-content: center; width: 48px; height: 48px; overflow: hidden;">
+                        <img th:src="@{'https://www.google.com/s2/favicons?domain=' + ${website.url} + '&sz=64'}"
+                            alt="Logo" style="width: 32px; height: 32px; object-fit: contain;"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" style="color: var(--brand-primary); display: none;">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                            <path
+                                d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                            </path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="heading-md" th:text="${website.name}">Website Name</h3>
+                        <p class="text-muted" style="font-size: 0.875rem;" th:text="${website.url}">https://example.com
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center mt-4 pt-4"
+                    style="border-top: 1px solid var(--border-color);">
+                    <span class="text-muted" style="font-size: 0.875rem;" th:text="#{vault.click_view}">Click to view
+                        credentials</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        style="color: var(--text-secondary);">
+                        <path d="M5 12h14"></path>
+                        <path d="M12 5l7 7-7 7"></path>
+                    </svg>
+                </div>
+            </a>
+        </div>
+    </div>
+</body>
+
+</html>

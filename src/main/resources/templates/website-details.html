@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${website.name} + ' - Details'">Website Details</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="/websites" class="nav-brand">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" style="color: var(--brand-primary);">
+                    <path d="M19 12H5"></path>
+                    <path d="M12 19l-7-7 7-7"></path>
+                </svg>
+                <span th:text="#{home.view_vault}">Back to Vault</span>
+            </a>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <div>
+                    <a href="?lang=en"
+                        style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">EN</a>
+                    <span style="color: var(--text-muted);">|</span>
+                    <a href="?lang=es"
+                        style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">ES</a>
+                </div>
+                <form th:action="@{/logout}" method="post" style="margin: 0;">
+                    <button type="submit" class="btn btn-ghost">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" style="max-width: 900px;">
+        <div class="text-center mb-8">
+            <div class="flex items-center justify-center gap-4 mb-2">
+                <div style="width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;">
+                    <img th:src="@{'https://www.google.com/s2/favicons?domain=' + ${website.url} + '&sz=64'}" alt="Logo"
+                        style="width: 48px; height: 48px; border-radius: 8px; object-fit: contain;"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        style="display: none; color: var(--text-muted);">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path
+                            d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                        </path>
+                    </svg>
+                </div>
+                <h1 class="heading-xl" th:text="${website.name}">Website Name</h1>
+                <a th:href="@{/websites/{id}/edit(id=${website.id})}" class="btn btn-ghost" style="padding: 0.5rem;"
+                    title="Edit Website">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                </a>
+            </div>
+            <a th:href="${website.url}" target="_blank" class="text-muted"
+                style="display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; transition: color 0.2s;">
+                <span th:text="${website.url}">https://example.com</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+            </a>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="card mb-8" style="padding: 1.5rem;">
+            <form method="get" th:action="@{/websites/{id}(id=${website.id})}" class="filter-bar" style="margin: 0;">
+                <div style="flex: 1; position: relative;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                    </svg>
+                    <input type="text" name="managerUserFilter" th:value="${managerUserFilter}"
+                        th:placeholder="#{details.filter_placeholder}" placeholder="Filter by Manager User..."
+                        class="form-input" style="padding-left: 3rem;">
+                </div>
+                <button type="submit" class="btn btn-primary" th:text="#{details.filter_btn}">Filter</button>
+                <a th:if="${managerUserFilter != null && !managerUserFilter.isBlank()}"
+                    th:href="@{/websites/{id}(id=${website.id})}" class="btn btn-secondary"
+                    th:text="#{details.clear_btn}">Clear</a>
+            </form>
+        </div>
+
+        <h2 class="heading-lg mb-4" th:text="#{details.credentials_header}">Credentials</h2>
+
+        <div th:if="${#lists.isEmpty(credentials)}" class="text-center"
+            style="padding: 3rem; background: var(--surface-1); border-radius: var(--radius-lg); border: 1px dashed var(--border-color);">
+            <p class="text-muted" th:text="#{details.no_credentials}">No credentials found for this website.</p>
+        </div>
+
+        <!-- Credentials List -->
+        <div class="grid">
+            <div th:each="cred : ${credentials}" class="card" style="padding: 1.5rem;">
+                <!-- Desktop: Row layout, Mobile: Col layout -->
+                <div class="flex flex-col gap-4">
+
+                    <!-- Username Row -->
+                    <div class="detail-row">
+                        <div class="flex items-center gap-2">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" class="text-muted">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            <span class="text-muted" style="font-size: 0.875rem;"
+                                th:text="#{details.col_username}">Username</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="heading-md" th:text="${cred.username}">user@example.com</span>
+                            <button class="copy-btn" onclick="copyToClipboard(this.previousElementSibling.innerText)"
+                                title="Copy username">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Password Row -->
+                    <div class="detail-row">
+                        <div class="flex items-center gap-2">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" class="text-muted">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                            <span class="text-muted" style="font-size: 0.875rem;"
+                                th:text="#{details.col_password}">Password</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <!-- Password Masking logic -->
+                            <div class="password-wrapper" style="position: relative;">
+                                <input type="password" readonly th:value="${cred.decryptedPassword}"
+                                    style="background: transparent; border: none; color: var(--text-primary); font-family: monospace; font-size: 1rem; width: 100%; min-width: 200px;"
+                                    class="password-display">
+                            </div>
+                            <button class="btn btn-ghost" onclick="togglePasswordVisibility(this)"
+                                style="padding: 0.4rem;">
+                                <svg class="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                            <button class="copy-btn" th:data-pass="${cred.decryptedPassword}"
+                                onclick="copyToClipboard(this.getAttribute('data-pass'))" title="Copy password">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Manager Info & Actions -->
+                    <div class="flex justify-between items-end mt-4">
+                        <div>
+                            <div th:if="${cred.managerUser != null}" class="text-muted" style="font-size: 0.875rem;">
+                                <span style="opacity: 0.6;" th:text="#{details.managed_by}">Managed by:</span>
+                                <span style="color: var(--brand-secondary);"
+                                    th:text="${cred.managerUser}">ManagerName</span>
+                            </div>
+                        </div>
+
+                        <form th:action="@{/credentials/{id}/delete(id=${cred.id})}" method="post"
+                            th:data-confirm-message="#{details.delete_confirm}"
+                            onsubmit="return confirm(this.getAttribute('data-confirm-message'))">
+                            <!-- Hidden input to keep current filters/page if needed, but for now simple redirect back -->
+                            <button type="submit" class="btn btn-danger"
+                                style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path
+                                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                    </path>
+                                </svg>
+                                <span th:text="#{details.delete_btn}">Delete</span>
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Simple Script for copying/toggling -->
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Could add a toast notification here
+                // alert('Copied to clipboard!');
+            });
+        }
+
+        function togglePasswordVisibility(btn) {
+            const input = btn.previousElementSibling.querySelector('input');
+            const icon = btn.querySelector('svg');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.style.opacity = '0.5'; // Visual feedback
+            } else {
+                input.type = 'password';
+                icon.style.opacity = '1';
+            }
+        }
+    </script>
+</body>
+
+</html>

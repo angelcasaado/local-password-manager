@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Local Password Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+
+<body>
+    <div class="auth-container">
+        <div class="card auth-card">
+            <div class="text-center mb-8">
+                <h1 class="heading-lg" th:text="#{login.title}">Welcome Back</h1>
+                <p class="text-muted mt-2" th:text="#{home.subtitle}">Sign in to access your vault</p>
+            </div>
+
+            <!-- Alerts -->
+            <div th:if="${param.error}" class="alert alert-danger">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span>Invalid username or password.</span>
+            </div>
+
+            <div th:if="${param.logout}" class="alert alert-success">
+                <span>You have been logged out securely.</span>
+            </div>
+
+            <div th:if="${param.success}" class="alert alert-success">
+                <span>Registration successful! Please login.</span>
+            </div>
+
+            <form th:action="@{/login}" method="post">
+                <div class="form-group">
+                    <label for="username" class="form-label" th:text="#{login.username}">Username</label>
+                    <input type="text" id="username" name="username" class="form-input"
+                        placeholder="Enter your username" required autofocus>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label" th:text="#{login.password}">Password</label>
+                    <input type="password" id="password" name="password" class="form-input"
+                        placeholder="Enter your password" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block mt-4">
+                    <span th:text="#{login.submit}">Sign In</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </button>
+            </form>
+
+            <div class="text-center mt-8">
+                <p class="text-muted">
+                    Don't have an account?
+                    <a th:href="@{/register}" style="font-weight: 500;">Create one now</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
